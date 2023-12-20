@@ -1,26 +1,29 @@
 ﻿using B3.Api.DTO;
 using B3.Api.Interfaces;
 using B3.Api.Models;
+using System.Diagnostics.Metrics;
 
 namespace B3.Api.Services
 {
-    public class CDBService : ICDBService
+    public class CdbService : ICdbService
     {
 
 
-        public CDB Calcular(CalculoCDB calculo)
+        public Cdb Calcular(CalculoCdb calculo)
         {
             var valorInicial = calculo.ValorMonetario;
             var valorFinal = 0M;
 
-            for (int i = 1; i < calculo.MesesResgate; i++)
-            {
-                valorFinal += valorInicial * (1 + TAXA);
+            // VF = VI x [1 + (CDI x TB)]
+            for (int i = 1; i <= calculo.MesesResgate; i++) { 
+                valorFinal = valorInicial * (1 + TAXA);
+                valorInicial = valorFinal;
             }
 
-            decimal valorLiquido = ObterValorLiquido(valorInicial, valorFinal, calculo.MesesResgate);
 
-            return new CDB()
+            decimal valorLiquido = ObterValorLiquido(calculo.ValorMonetario, valorFinal, calculo.MesesResgate);
+
+            return new Cdb()
             {
                 ValorBruto = valorFinal,
                 ValorLiquido = valorLiquido
@@ -32,7 +35,7 @@ namespace B3.Api.Services
             var taxa_ir = ObterTaxaIR(mesesResgate);
             var rendimento = valorBruto - valorInicial;
 
-            return valorInicial + rendimento * (taxa_ir / 100);
+            return valorInicial + rendimento * (1 - (taxa_ir / 100));
         }
 
         public decimal ObterTaxaIR(int mesesResgate)
@@ -40,9 +43,9 @@ namespace B3.Api.Services
             // Em uma aplicação real esses valores provavelmente viriam de uma tabela.
             if (mesesResgate <= 6)
                 return 22.5M;
-            else if (mesesResgate > 6 && mesesResgate <= 12)
+            else if (mesesResgate <= 12)
                 return 20;
-            else if (mesesResgate > 12 && mesesResgate <= 24)
+            else if (mesesResgate <= 24)
                 return 17.5M;
             else
                 return 15M;
@@ -51,8 +54,8 @@ namespace B3.Api.Services
         #region Constantes
 
         // Valores definidos pelo exercício
-        public const decimal CDI = 0.9M;
-        public const decimal TB = 108;
+        public const decimal CDI = 0.9M / 100;
+        public const decimal TB = 108M / 100;
         public decimal TAXA { get; } = CDI * TB;
 
         #endregion

@@ -2,7 +2,7 @@
 
 namespace B3.Api.Models;
 
-public class CalculoCDB : BaseModel
+public class CalculoCdb : BaseModel
 {
     [Required]
     //[Range(1, double.MaxValue, ErrorMessage = "O valor monetário deve ser positivo.")]
@@ -21,6 +21,15 @@ public class CalculoCDB : BaseModel
 
         if (ValorMonetario <= 0)
             AdicionarErroValidacao("O valor monetário deve ser positivo.");
+
+        if (MesesResgate > 1000)
+            AdicionarErroValidacao("Máximo de 1000 meses.");
+
+        if (MesesResgate > 1000)
+            AdicionarErroValidacao("Máximo de 1000 meses.");
+
+        if (ValorMonetario > 100_000_000)
+            AdicionarErroValidacao("Máximo de 1 milhão neste exemplo.");
 
         return !ErrosValidacao.Any();
     }

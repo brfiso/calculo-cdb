@@ -1,23 +1,16 @@
 using B3.Api.DTO;
-using B3.Api.Interfaces;
 using B3.Api.Models;
 using B3.Api.Services;
 
 namespace B3.Api.Tests
 {
-    public class TestCDB
+    public class TestCdb
     {
-        private readonly ICDBService _cdbService;
-
-        public TestCDB()
-        {
-            _cdbService = new CDBService();
-        }
 
         [Fact]
         public void CDB_MES_INVALIDO()
         {
-            CalculoCDB cdb = new CalculoCDB();
+            var cdb = new CalculoCdb();
             cdb.MesesResgate = 1;
             cdb.ValorMonetario = 1000;
 
@@ -27,7 +20,7 @@ namespace B3.Api.Tests
         [Fact]
         public void CDB_Valor_NEGATIVO()
         {
-            CalculoCDB cdb = new CalculoCDB();
+            var cdb = new CalculoCdb();
             cdb.MesesResgate = 6;
             cdb.ValorMonetario = 0;
 
@@ -37,7 +30,7 @@ namespace B3.Api.Tests
         [Fact]
         public void CDB_TAXAIR()
         {
-            var cdbService = new CDBService();
+            var cdbService = new CdbService();
 
             var taxa = cdbService.ObterTaxaIR(0);
             Assert.Equal(22.5M, taxa);
@@ -65,7 +58,7 @@ namespace B3.Api.Tests
         [Fact]
         public void CDB_ObterValorLiquido()
         {
-            var cdbService = new CDBService();
+            var cdbService = new CdbService();
             decimal valorInicial = 1000;
             decimal valorBruto = 1200;
             int meses = 6;
@@ -73,7 +66,7 @@ namespace B3.Api.Tests
             var valorLiquido = cdbService.ObterValorLiquido(valorInicial, valorBruto, meses);
 
             var rendimento = valorBruto - valorInicial;
-            var rendimentoLiquido = (rendimento * cdbService.ObterTaxaIR(meses) / 100);
+            var rendimentoLiquido = (rendimento * (1 - (cdbService.ObterTaxaIR(meses) / 100)));
             var valorLiquido_Calculado = valorInicial + rendimentoLiquido;
 
             Assert.Equal(valorLiquido, valorLiquido_Calculado);
@@ -82,35 +75,29 @@ namespace B3.Api.Tests
         [Fact]
         public void CDB_Calcular()
         {
-            var cdbService = new CDBService();
-            var taxa = 97.2M;
-            decimal valorInicial = 1000;
-            int mesesResgate = 12;
+            var cdbService = new CdbService();
+
+            const decimal valorInicial = 1000;
+            const  int mesesResgate = 12;
 
 
 
-            var model = cdbService.Calcular(new CalculoCDB
+            var model = cdbService.Calcular(new CalculoCdb
             {
                 ValorMonetario = valorInicial,
-                MesesResgate = 12
+                MesesResgate = mesesResgate
             });
 
-            var valorFinal = 0M;
 
-            for (int i = 1; i < mesesResgate; i++)
+            var modelTeste = new Cdb
             {
-                valorFinal += valorInicial * (1 + taxa);
-            }
-
-            var modelTeste = new CDB
-            {
-                ValorBruto = valorFinal,
-                ValorLiquido = cdbService.ObterValorLiquido(valorInicial, valorFinal, mesesResgate)
+                ValorBruto = 1123.08M,
+                ValorLiquido = 1098.47M
 
             };
 
-            Assert.Equal(model.ValorLiquido, modelTeste.ValorLiquido);
-            Assert.Equal(model.ValorBruto, modelTeste.ValorBruto);
+            Assert.Equal(Math.Round(model.ValorLiquido, 2), modelTeste.ValorLiquido);
+            Assert.Equal(Math.Round(model.ValorBruto, 2), modelTeste.ValorBruto);
         }
     }
 }

@@ -37,9 +37,9 @@
       <div *ngIf="this.erros.length > 0" class="alert alert-danger">
         {{ this.erros }}
       </div>
-      <div *ngIf="this.valor_liquido > 0">
-        <h3>Valor líquido: {{ this.valor_liquido }}</h3>
+      <div *ngIf="this.valor_liquido.length > 0">
         <h3>Valor Bruto: {{ this.valor_bruto }}</h3>
+        <h3>Valor líquido: {{ this.valor_liquido }}</h3>
       </div>
     </div>
   </div>

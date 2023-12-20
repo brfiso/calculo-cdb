@@ -6,21 +6,20 @@ namespace B3.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CDBController : BaseApiController
+    public class CdbController : BaseApiController
     {
-        private readonly ICDBService _cdbService;
+        private readonly ICdbService _cdbService;
 
-        public CDBController(ICDBService cdbService)
+        public CdbController(ICdbService cdbService)
         {
             _cdbService = cdbService;
         }
 
         [HttpPost("Calcular")]
-        public IResult CalcularCDB(CalculoCDB model)
+        public IResult CalcularCDB(CalculoCdb model)
         {
-            if (ModelState.IsValid)
-                if (!model.EhValido())
-                    return Results.BadRequest(model.ErrosValidacao);
+            if (ModelState.IsValid && !model.EhValido())
+                return Results.BadRequest(model.ErrosValidacao);
 
             var cdb = _cdbService.Calcular(model);
             return Results.Ok(cdb);

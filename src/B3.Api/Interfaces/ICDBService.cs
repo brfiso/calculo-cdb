@@ -3,8 +3,8 @@ using B3.Api.Models;
 
 namespace B3.Api.Interfaces
 {
-    public interface ICDBService
+    public interface ICdbService
     {
-        CDB Calcular(CalculoCDB calculo);
+        Cdb Calcular(CalculoCdb calculo);
     }
 }
