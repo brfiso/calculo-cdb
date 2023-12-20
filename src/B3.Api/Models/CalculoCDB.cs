@@ -5,11 +5,11 @@ namespace B3.Api.Models;
 public class CalculoCDB : BaseModel
 {
     [Required]
-    [Range(1, double.MaxValue, ErrorMessage = "O valor monetário deve ser positivo.")]
+    //[Range(1, double.MaxValue, ErrorMessage = "O valor monetário deve ser positivo.")]
     public decimal ValorMonetario { get; set; }
 
     [Required]
-    [Range(2, int.MaxValue, ErrorMessage = "Prazo mínimo de 2 meses para o resgate.")]
+    //[Range(2, int.MaxValue, ErrorMessage = "Prazo mínimo de 2 meses para o resgate.")]
     public int MesesResgate { get; set; }
 
     public override bool EhValido()

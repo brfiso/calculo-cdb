@@ -18,8 +18,9 @@ namespace B3.Api.Controllers
         [HttpPost("Calcular")]
         public IResult CalcularCDB(CalculoCDB model)
         {
-            if (!ModelState.IsValid)
-                return Results.BadRequest(model);
+            if (ModelState.IsValid)
+                if (!model.EhValido())
+                    return Results.BadRequest(model.ErrosValidacao);
 
             var cdb = _cdbService.Calcular(model);
             return Results.Ok(cdb);
